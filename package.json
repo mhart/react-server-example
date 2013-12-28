@@ -1,0 +1,20 @@
+{
+  "name": "react-server-example",
+  "version": "0.0.1",
+  "description": "A very simple implementation of server-side React rendering",
+  "main": "server.js",
+  "repository": "mhart/react-server-example",
+  "keywords": [
+    "react",
+    "reactjs",
+    "server",
+    "server-side"
+  ],
+  "author": "Michael Hart <michael.hart.au@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "envify": "~0.2.0",
+    "react": "~0.8.0",
+    "browserify": "~3.14.1"
+  }
+}
