@@ -22,7 +22,7 @@ http.createServer(function(req, res) {
     var props = {items: [0, 1, '</script>', '<!--inject!-->']}
 
     // Now that we've got our data, we can perform the server-side rendering by passing it in
-    // as `props` to our React component - and spitting out a string of HTML to be sent to the browser
+    // as `props` to our React component - and returning an HTML string to be sent to the browser
     var myAppHtml = React.renderComponentToString(MyApp(props))
 
     res.setHeader('Content-Type', 'text/html')
@@ -44,7 +44,7 @@ http.createServer(function(req, res) {
       // We could have used a window-level variable, or even a JSON-typed script tag,
       // but this option is safe from namespacing and injection issues,
       // and doesn't require parsing
-      '<script type=text/javascript>' +
+      '<script>' +
         'document.getElementById("content").myAppProps = ' + escapeJs(JSON.stringify(props)) +
       '</script>' +
 
@@ -53,7 +53,7 @@ http.createServer(function(req, res) {
       // our initialisation code, which will render our component on the client-side
       // into the `content` div (essentially no DOM tree changes will occur,
       // but the events will all be wired up correctly)
-      '<script type=text/javascript src=/bundle.js></script>'
+      '<script src=/bundle.js></script>'
     )
 
   // This endpoint is hit when the browser is requesting bundle.js from the page above
