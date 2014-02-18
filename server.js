@@ -1,5 +1,6 @@
 var http = require('http'),
     browserify = require('browserify'),
+    literalify = require('literalify'),
     React = require('react'),
     // This is our React component, shared by server and browser thanks to browserify
     MyApp = require('./myApp')
@@ -48,6 +49,10 @@ http.createServer(function(req, res) {
         'document.getElementById("content").myAppProps = ' + escapeJs(JSON.stringify(props)) +
       '</script>' +
 
+      // We'll load React from a CDN - you don't have to do this,
+      // you can bundle it up or serve it locally if you like
+      '<script src=//fb.me/react-0.9.0-rc1.js></script>' +
+
       // Then the browser will fetch the client-side bundle, which we serve from
       // the endpoint below. This includes the React library, our component, and
       // our initialisation code, which will render our component on the client-side
@@ -61,11 +66,18 @@ http.createServer(function(req, res) {
 
     res.setHeader('Content-Type', 'text/javascript')
 
-    // Here we invoke browserify to package up React, our component, and our initialisation code
+    // Here we invoke browserify to package up our component and our initialisation code
     // DON'T do it on the fly like this in production - it's very costly -
     // either compile the bundle ahead of time, or use some smarter middleware
     // (eg browserify-middleware)
-    browserify().add('./browser.js').bundle().pipe(res)
+    // We also use literalify to transform our `require` statements for React
+    // so that it uses the global variable (from the CDN JS file) instead of
+    // bundling it up with everything else
+    browserify()
+      .transform(literalify.configure({react: 'window.React'}))
+      .add('./browser.js')
+      .bundle()
+      .pipe(res)
 
   // Return 404 for all other requests
   } else {
