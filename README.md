@@ -101,7 +101,7 @@ http.createServer(function(req, res) {
 
       // We'll load React from a CDN - you don't have to do this,
       // you can bundle it up or serve it locally if you like
-      '<script src=//fb.me/react-0.9.0.js></script>' +
+      '<script src=//fb.me/react-0.9.0.min.js></script>' +
 
       // Then the browser will fetch the client-side bundle, which we serve from
       // the endpoint below. This includes the React library, our component, and
