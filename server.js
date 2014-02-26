@@ -60,7 +60,7 @@ http.createServer(function(req, res) {
       // injection issues, and doesn't require parsing
       '<script>' +
         'var MyApp = require("./myApp.js"), container = document.getElementById("content");' +
-        'React.renderComponent(MyApp(' + escapeJs(JSON.stringify(props)) + '), container)' +
+        'React.renderComponent(MyApp(' + safeStringify(props) + '), container)' +
       '</script>'
     )
 
@@ -92,7 +92,7 @@ http.createServer(function(req, res) {
 }).listen(3000)
 
 
-// A utility function to safely escape JavaScript/JSON for embedding in a <script> tag
-function escapeJs(jsStr) {
-  return jsStr.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
+// A utility function to safely escape JSON for embedding in a <script> tag
+function safeStringify(obj) {
+  return JSON.stringify(obj).replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
 }
