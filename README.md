@@ -108,18 +108,20 @@ http.createServer(function(req, res) {
       // you can bundle it up or serve it locally if you like
       '<script src=//fb.me/react-0.9.0.min.js></script>' +
 
-      // Ensure that our initial data is also accessible on the client-side by
-      // embedding it here in the page. We could have used a window-level
-      // variable, or even a JSON-typed script tag, but this option is safer
-      // from namespacing and injection issues, and doesn't require parsing
-      '<script>React.__myAppProps = ' + escapeJs(JSON.stringify(props)) + '</script>' +
+      // Then the browser will fetch the browserified bundle, which we serve
+      // from the endpoint below. This exposes our component so it can be
+      // referenced from the next script block
+      '<script src=/bundle.js></script>' +
 
-      // Then the browser will fetch the client-side bundle, which we serve
-      // from the endpoint below. This includes our component and our
-      // initialisation code, which will render our component on the
-      // client-side into the `content` div (essentially no DOM tree changes
-      // will occur, but the events will all be wired up correctly)
-      '<script src=/bundle.js></script>'
+      // This script renders the component in the browser using the component
+      // from the browserified bundle and the same props we used to render
+      // server-side. We could have used a window-level variable, or even a
+      // JSON-typed script tag, but this option is safe from namespacing and
+      // injection issues, and doesn't require parsing
+      '<script>' +
+        'var MyApp = require("./myApp.js"), container = document.getElementById("content");' +
+        'React.renderComponent(MyApp(' + escapeJs(JSON.stringify(props)) + '), container)' +
+      '</script>'
     )
 
   // This endpoint is hit when the browser is requesting bundle.js from the page above
@@ -127,8 +129,7 @@ http.createServer(function(req, res) {
 
     res.setHeader('Content-Type', 'text/javascript')
 
-    // Here we invoke browserify to package up our component and our
-    // initialisation code.
+    // Here we invoke browserify to package up our component.
     // DON'T do it on the fly like this in production - it's very costly -
     // either compile the bundle ahead of time, or use some smarter middleware
     // (eg browserify-middleware).
@@ -137,7 +138,7 @@ http.createServer(function(req, res) {
     // bundling it up with everything else
     browserify()
       .transform(literalify.configure({react: 'window.React'}))
-      .add('./browser.js')
+      .require('./myApp.js')
       .bundle()
       .pipe(res)
 
@@ -155,22 +156,4 @@ http.createServer(function(req, res) {
 function escapeJs(jsStr) {
   return jsStr.replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
 }
-```
-
-`browser.js`:
-```js
-var React = require('react'),
-    MyApp = require('./myApp')
-
-// This is bundled up and run when the browser requests '/bundle.js', so this
-// is the entry point where we initialise our React component from the
-// client (browser) side
-
-// We had set the `React.__myAppProps` value using an inline script on the page
-// populated from the server-side, so now pass that in to ensure that React
-// comes up with the same result when it renders the component (you'll see a
-// warning in the browser console if it fails to render the same result - in
-// which case there may be something out of whack with the data you're
-// initialising with in the browser vs the server)
-React.renderComponent(MyApp(React.__myAppProps), document.getElementById('content'))
 ```
