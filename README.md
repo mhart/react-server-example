@@ -15,7 +15,7 @@ $ node server.js
 Then navigate to [http://localhost:3000](http://localhost:3000) and
 click on the button to see some reactive events in action.
 
-Also pop open the browser's Dev Tools to ensure that the HTML being sent from the server is already rendered
+Try viewing the page source to ensure the HTML being sent from the server is already rendered
 (with checksums to determine whether client-side rendering is necessary)
 
 Here are the files involved:
@@ -109,12 +109,12 @@ http.createServer(function(req, res) {
       '<script src=//fb.me/react-0.9.0.min.js></script>' +
 
       // Then the browser will fetch the browserified bundle, which we serve
-      // from the endpoint below. This exposes our component so it can be
+      // from the endpoint further down. This exposes our component so it can be
       // referenced from the next script block
       '<script src=/bundle.js></script>' +
 
-      // This script renders the component in the browser using the component
-      // from the browserified bundle and the same props we used to render
+      // This script renders the component in the browser, referencing it
+      // from the browserified bundle, using the same props we used to render
       // server-side. We could have used a window-level variable, or even a
       // JSON-typed script tag, but this option is safe from namespacing and
       // injection issues, and doesn't require parsing
