@@ -19,11 +19,14 @@ module.exports = React.createClass({
     this.setState({items: this.state.items.concat(this.state.items.length)})
   },
 
-  // For ease of illustration, we just use the JS methods directly
+  // For ease of illustration, we just use the React JS methods directly
   // (no JSX compilation needed)
+  // Note that we allow the button to be disabled depending on the props passed
+  // in, so we can render it disabled initially, and then enable it when
+  // everything has loaded
   render: function() {
     return div(null,
-      button({onClick: this.handleClick}, 'Add Item'),
+      button({onClick: this.handleClick, disabled: this.props.disabled}, 'Add Item'),
       ul({children: this.state.items.map(function(item) {
         return li(null, item)
       })})

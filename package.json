@@ -13,9 +13,9 @@
   "author": "Michael Hart <michael.hart.au@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "envify": "~1.2.0",
-    "react": "~0.9.0",
-    "browserify": "~3.30.1",
-    "literalify": "~0.2.0"
+    "envify": "^1.2.1",
+    "react": "^0.10.0",
+    "browserify": "^3.33.0",
+    "literalify": "^0.3.0"
   }
 }

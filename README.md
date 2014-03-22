@@ -43,11 +43,14 @@ module.exports = React.createClass({
     this.setState({items: this.state.items.concat(this.state.items.length)})
   },
 
-  // For ease of illustration, we just use the JS methods directly
+  // For ease of illustration, we just use the React JS methods directly
   // (no JSX compilation needed)
+  // Note that we allow the button to be disabled depending on the props passed
+  // in, so we can render it disabled initially, and then enable it when
+  // everything has loaded
   render: function() {
     return div(null,
-      button({onClick: this.handleClick}, 'Add Item'),
+      button({onClick: this.handleClick, disabled: this.props.disabled}, 'Add Item'),
       ul({children: this.state.items.map(function(item) {
         return li(null, item)
       })})
@@ -82,7 +85,8 @@ http.createServer(function(req, res) {
     // here (with some potentially dangerous values for testing), but you could
     // imagine this would be objects typically fetched async from a DB,
     // filesystem or API, depending on the logged-in user, etc.
-    var props = {items: [0, 1, '</script>', '<!--inject!-->']}
+    // We also render the button disabled, and enable it once the page has loaded
+    var props = {items: [0, 1, '</script>', '<!--inject!-->'], disabled: true}
 
     // Now that we've got our data, we can perform the server-side rendering by
     // passing it in as `props` to our React component - and returning an HTML
@@ -106,7 +110,7 @@ http.createServer(function(req, res) {
 
       // We'll load React from a CDN - you don't have to do this,
       // you can bundle it up or serve it locally if you like
-      '<script src=//fb.me/react-0.9.0.min.js></script>' +
+      '<script src=//fb.me/react-0.10.0.min.js></script>' +
 
       // Then the browser will fetch the browserified bundle, which we serve
       // from the endpoint further down. This exposes our component so it can be
@@ -119,8 +123,10 @@ http.createServer(function(req, res) {
       // JSON-typed script tag, but this option is safe from namespacing and
       // injection issues, and doesn't require parsing
       '<script>' +
-        'var MyApp = require("./myApp.js"), container = document.getElementById("content");' +
-        'React.renderComponent(MyApp(' + safeStringify(props) + '), container)' +
+        'var MyApp = require("./myApp.js"), container = document.getElementById("content"), ' +
+        'component = React.renderComponent(MyApp(' + safeStringify(props) + '), container); ' +
+        // Now that everything has loaded, we can enable the button
+        'component.setProps({disabled: false})' +
       '</script>'
     )
 
