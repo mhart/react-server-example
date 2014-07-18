@@ -8,9 +8,15 @@ var React = require('react'),
 module.exports = React.createClass({
 
   // We initialise its state by using the `props` that were passed in when it
-  // was first rendered
+  // was first rendered. We also want the button to be disabled until the
+  // component has fully mounted on the DOM
   getInitialState: function() {
-    return {items: this.props.items}
+    return {items: this.props.items, disabled: true}
+  },
+
+  // Once the component has been mounted, we can enable the button
+  componentDidMount: function() {
+    this.setState({disabled: false})
   },
 
   // Then we just update the state whenever its clicked - but you could imagine
@@ -26,7 +32,7 @@ module.exports = React.createClass({
   // everything has loaded
   render: function() {
     return div(null,
-      button({onClick: this.handleClick, disabled: this.props.disabled}, 'Add Item'),
+      button({onClick: this.handleClick, disabled: this.state.disabled}, 'Add Item'),
       ul({children: this.state.items.map(function(item) {
         return li(null, item)
       })})

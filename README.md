@@ -32,9 +32,15 @@ var React = require('react'),
 module.exports = React.createClass({
 
   // We initialise its state by using the `props` that were passed in when it
-  // was first rendered
+  // was first rendered. We also want the button to be disabled until the
+  // component has fully mounted on the DOM
   getInitialState: function() {
-    return {items: this.props.items}
+    return {items: this.props.items, disabled: true}
+  },
+
+  // Once the component has been mounted, we can enable the button
+  componentDidMount: function() {
+    this.setState({disabled: false})
   },
 
   // Then we just update the state whenever its clicked - but you could imagine
@@ -50,7 +56,7 @@ module.exports = React.createClass({
   // everything has loaded
   render: function() {
     return div(null,
-      button({onClick: this.handleClick, disabled: this.props.disabled}, 'Add Item'),
+      button({onClick: this.handleClick, disabled: this.state.disabled}, 'Add Item'),
       ul({children: this.state.items.map(function(item) {
         return li(null, item)
       })})
@@ -85,8 +91,7 @@ http.createServer(function(req, res) {
     // here (with some potentially dangerous values for testing), but you could
     // imagine this would be objects typically fetched async from a DB,
     // filesystem or API, depending on the logged-in user, etc.
-    // We also render the button disabled, and enable it once the page has loaded
-    var props = {items: [0, 1, '</script>', '<!--inject!-->'], disabled: true}
+    var props = {items: [0, 1, '</script>', '<!--inject!-->']}
 
     // Now that we've got our data, we can perform the server-side rendering by
     // passing it in as `props` to our React component - and returning an HTML
@@ -123,10 +128,8 @@ http.createServer(function(req, res) {
       // JSON-typed script tag, but this option is safe from namespacing and
       // injection issues, and doesn't require parsing
       '<script>' +
-        'var MyApp = require("./myApp.js"), container = document.getElementById("content"), ' +
-        'component = React.renderComponent(MyApp(' + safeStringify(props) + '), container); ' +
-        // Now that everything has loaded, we can enable the button
-        'component.setProps({disabled: false})' +
+        'var MyApp = require("./myApp.js"), container = document.getElementById("content"); ' +
+        'React.renderComponent(MyApp(' + safeStringify(props) + '), container)' +
       '</script>'
     )
 
