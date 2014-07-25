@@ -27,9 +27,8 @@ module.exports = React.createClass({
 
   // For ease of illustration, we just use the React JS methods directly
   // (no JSX compilation needed)
-  // Note that we allow the button to be disabled depending on the props passed
-  // in, so we can render it disabled initially, and then enable it when
-  // everything has loaded
+  // Note that we allow the button to be disabled initially, and then enable it
+  // when everything has loaded
   render: function() {
     return div(null,
       button({onClick: this.handleClick, disabled: this.state.disabled}, 'Add Item'),

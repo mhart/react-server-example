@@ -51,9 +51,8 @@ module.exports = React.createClass({
 
   // For ease of illustration, we just use the React JS methods directly
   // (no JSX compilation needed)
-  // Note that we allow the button to be disabled depending on the props passed
-  // in, so we can render it disabled initially, and then enable it when
-  // everything has loaded
+  // Note that we allow the button to be disabled initially, and then enable it
+  // when everything has loaded
   render: function() {
     return div(null,
       button({onClick: this.handleClick, disabled: this.state.disabled}, 'Add Item'),
@@ -115,7 +114,7 @@ http.createServer(function(req, res) {
 
       // We'll load React from a CDN - you don't have to do this,
       // you can bundle it up or serve it locally if you like
-      '<script src=//fb.me/react-0.11.0.min.js></script>' +
+      '<script src=//fb.me/react-0.11.1.min.js></script>' +
 
       // Then the browser will fetch the browserified bundle, which we serve
       // from the endpoint further down. This exposes our component so it can be
