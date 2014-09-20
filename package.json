@@ -1,6 +1,6 @@
 {
   "name": "react-server-example",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A very simple implementation of server-side React rendering",
   "main": "server.js",
   "repository": "mhart/react-server-example",
