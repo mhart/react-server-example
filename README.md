@@ -71,7 +71,7 @@ var http = require('http'),
     literalify = require('literalify'),
     React = require('react'),
     // This is our React component, shared by server and browser thanks to browserify
-    MyApp = require('./myApp')
+    MyApp = React.createFactory(require('./myApp'))
 
 
 // Just create a plain old HTTP server that responds to two endpoints ('/' and
@@ -95,7 +95,7 @@ http.createServer(function(req, res) {
     // Now that we've got our data, we can perform the server-side rendering by
     // passing it in as `props` to our React component - and returning an HTML
     // string to be sent to the browser
-    var myAppHtml = React.renderComponentToString(MyApp(props))
+    var myAppHtml = React.renderToString(MyApp(props))
 
     res.setHeader('Content-Type', 'text/html')
 
@@ -114,7 +114,7 @@ http.createServer(function(req, res) {
 
       // We'll load React from a CDN - you don't have to do this,
       // you can bundle it up or serve it locally if you like
-      '<script src=//fb.me/react-0.11.2.min.js></script>' +
+      '<script src=//fb.me/react-0.12.0-rc1.min.js></script>' +
 
       // Then the browser will fetch the browserified bundle, which we serve
       // from the endpoint further down. This exposes our component so it can be
@@ -127,8 +127,8 @@ http.createServer(function(req, res) {
       // JSON-typed script tag, but this option is safe from namespacing and
       // injection issues, and doesn't require parsing
       '<script>' +
-        'var MyApp = require("./myApp.js"), container = document.getElementById("content"); ' +
-        'React.renderComponent(MyApp(' + safeStringify(props) + '), container)' +
+        'var MyApp = React.createFactory(require("./myApp.js"));' +
+        'React.render(MyApp(' + safeStringify(props) + '), document.getElementById("content"))' +
       '</script>'
     )
 
