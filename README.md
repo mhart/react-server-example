@@ -66,7 +66,8 @@ module.exports = React.createClass({
 
 `server.js`:
 ```js
-var http = require('http'),
+var fs = require('fs'),
+    http = require('http'),
     browserify = require('browserify'),
     literalify = require('literalify'),
     React = require('react'),
@@ -114,7 +115,7 @@ http.createServer(function(req, res) {
 
       // We'll load React from a CDN - you don't have to do this,
       // you can bundle it up or serve it locally if you like
-      '<script src=//fb.me/react-0.12.0-rc1.min.js></script>' +
+      '<script src=/react.js></script>' +
 
       // Then the browser will fetch the browserified bundle, which we serve
       // from the endpoint further down. This exposes our component so it can be
@@ -132,6 +133,12 @@ http.createServer(function(req, res) {
       '</script>'
     )
 
+  // This endpoint is hit when the browser is requesting react.js from the page above
+  } else if (req.url == '/react.js') {
+        fs.readFile(__dirname + '/node_modules/react/dist/react.min.js', 'utf8', function(err, text){
+            res.setHeader('Content-Type', 'text/javascript')
+            res.end(text);
+        });
   // This endpoint is hit when the browser is requesting bundle.js from the page above
   } else if (req.url == '/bundle.js') {
 
