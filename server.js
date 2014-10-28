@@ -59,7 +59,7 @@ http.createServer(function(req, res) {
       // JSON-typed script tag, but this option is safe from namespacing and
       // injection issues, and doesn't require parsing
       '<script>' +
-        'var MyApp = React.createFactory(require("./myApp.js"));' +
+        'var MyApp = React.createFactory(require("myApp"));' +
         'React.render(MyApp(' + safeStringify(props) + '), document.getElementById("content"))' +
       '</script>'
     )
@@ -77,7 +77,7 @@ http.createServer(function(req, res) {
     // so that it uses the global variable (from the CDN JS file) instead of
     // bundling it up with everything else
     browserify()
-      .require('./myApp.js')
+      .require('./myApp.js', {expose: 'myApp'})
       .transform({global: true}, literalify.configure({react: 'window.React'}))
       .bundle()
       .pipe(res)
@@ -89,7 +89,10 @@ http.createServer(function(req, res) {
   }
 
 // The http server listens on port 3000
-}).listen(3000)
+}).listen(3000, function(err) {
+  if (err) throw err
+  console.log('Listening on 3000...')
+})
 
 
 // A utility function to safely escape JSON for embedding in a <script> tag
