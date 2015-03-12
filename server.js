@@ -60,11 +60,9 @@ http.createServer(function(req, res) {
       // renderToString above. We could have used a window-level variable, or
       // even a JSON-typed script tag, but this option is safe from namespacing
       // and injection issues, and doesn't require parsing
-      script({dangerouslySetInnerHTML: {
-        __html:
-          'var App = React.createFactory(require("./App"));' +
-          'React.render(App(' + safeStringify(props) + '),' +
-            'document.getElementById("content"))'
+      script({dangerouslySetInnerHTML: {__html:
+        'var App = React.createFactory(require("./App"));' +
+        'React.render(App(' + safeStringify(props) + '), document.getElementById("content"))'
       }})
     ))
 
