@@ -34,36 +34,33 @@ http.createServer(function(req, res) {
       ]
     }
 
-    // Here we're using React to render the whole page, so we just use the
+    // Here we're using React to render the outer body, so we just use the
     // simpler renderToStaticMarkup function, but you could use any templating
     // language (or just a string) for the outer page template
     var html = React.renderToStaticMarkup(body(null,
 
       // The actual server-side rendering of our component occurs here, and we
       // pass our data in as `props`. This div is the same one that the client
-      // will "render" into on the browser in the script tag below
-      div({id: 'content', dangerouslySetInnerHTML: {
-        __html: React.renderToString(App(props))
+      // will "render" into on the browser from browser.js
+      div({id: 'content', dangerouslySetInnerHTML: {__html:
+        React.renderToString(App(props))
+      }}),
+
+      // The props should match on the client and server, so we stringify them
+      // on the page to be available for access by the code run in browser.js
+      // You could use any var name here as long as it's unique
+      script({dangerouslySetInnerHTML: {__html:
+        'var APP_PROPS = ' + safeStringify(props) + ';'
       }}),
 
       // We'll load React from a CDN - you don't have to do this,
       // you can bundle it up or serve it locally if you like
       script({src: '//fb.me/react-0.13.0.min.js'}),
 
-      // Then the browser will fetch the browserified bundle, which we serve
-      // from the endpoint further down. This exposes our component so it can be
-      // referenced from the next script block
-      script({src: '/bundle.js'}),
-
-      // This script renders the component in the browser, referencing it from
-      // the browserified bundle, using the same props we used in
-      // renderToString above. We could have used a window-level variable, or
-      // even a JSON-typed script tag, but this option is safe from namespacing
-      // and injection issues, and doesn't require parsing
-      script({dangerouslySetInnerHTML: {__html:
-        'var App = React.createFactory(require("./App"));' +
-        'React.render(App(' + safeStringify(props) + '), document.getElementById("content"))'
-      }})
+      // Then the browser will fetch and run the browserified bundle consisting
+      // of browser.js and all its dependencies.
+      // We serve this from the endpoint a few lines down.
+      script({src: '/bundle.js'})
     ))
 
     // Return the page to the browser
@@ -74,7 +71,7 @@ http.createServer(function(req, res) {
 
     res.setHeader('Content-Type', 'text/javascript')
 
-    // Here we invoke browserify to package up our component.
+    // Here we invoke browserify to package up browser.js and everything it requires.
     // DON'T do it on the fly like this in production - it's very costly -
     // either compile the bundle ahead of time, or use some smarter middleware
     // (eg browserify-middleware).
@@ -82,8 +79,8 @@ http.createServer(function(req, res) {
     // so that it uses the global variable (from the CDN JS file) instead of
     // bundling it up with everything else
     browserify()
-      .require('./App')
-      .transform({global: true}, literalify.configure({react: 'window.React'}))
+      .add('./browser.js')
+      .transform(literalify.configure({react: 'window.React'}))
       .bundle()
       .pipe(res)
 
