@@ -6,6 +6,9 @@ A simple (no compile) example of how to do server-side rendering with the
 shared between server and browser, as well as getting fast initial page loads
 and search-engine-friendly pages.
 
+A more complex example with shared routing and data fetching can be found at
+[react-server-routing-example](https://github.com/mhart/react-server-routing-example).
+
 Example
 -------
 
