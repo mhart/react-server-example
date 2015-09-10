@@ -1,4 +1,5 @@
 var React = require('react'),
+    ReactDOM = require('react-dom'),
     // This is our React component, shared by server and browser thanks to browserify
     App = React.createFactory(require('./App'))
 
@@ -7,4 +8,4 @@ var React = require('react'),
 // If these props match what is used in the server render, React will see that
 // it doesn't need to generate any DOM and the page will load faster
 
-React.render(App(window.APP_PROPS), document.getElementById('content'))
+ReactDOM.render(App(window.APP_PROPS), document.getElementById('content'))
