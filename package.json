@@ -15,7 +15,7 @@
   "dependencies": {
     "browserify": "^12.0.1",
     "literalify": "^0.4.0",
-    "react": "^0.14.2",
-    "react-dom": "^0.14.2"
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3"
   }
 }
