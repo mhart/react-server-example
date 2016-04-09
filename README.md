@@ -149,8 +149,8 @@ http.createServer(function(req, res) {
 
       // We'll load React from a CDN - you don't have to do this,
       // you can bundle it up or serve it locally if you like
-      script({src: '//fb.me/react-0.14.8.min.js'}),
-      script({src: '//fb.me/react-dom-0.14.8.min.js'}),
+      script({src: '//cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react.min.js'}),
+      script({src: '//cdnjs.cloudflare.com/ajax/libs/react/15.0.1/react-dom.min.js'}),
 
       // Then the browser will fetch and run the browserified bundle consisting
       // of browser.js and all its dependencies.
