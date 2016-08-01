@@ -5,7 +5,8 @@ var http = require('http'),
     ReactDOMServer = require('react-dom/server'),
     DOM = React.DOM, body = DOM.body, div = DOM.div, script = DOM.script,
     // This is our React component, shared by server and browser thanks to browserify
-    App = React.createFactory(require('./App'))
+    App = React.createFactory(require('./App')),
+    fs = require('fs');
 
 
 // Just create a plain old HTTP server that responds to two endpoints ('/' and
@@ -88,7 +89,15 @@ http.createServer(function(req, res) {
       }))
       .bundle()
       .pipe(res)
-
+  // 直接使用react生成的后端html字符串
+  } else if (req.url == '/pureHtml') {
+    res.setHeader('Content-Type', 'text/html')
+    fs.readFile('./pureHtml.html','utf-8',function(err, data) {//读取内容
+        if(err) throw err;
+        res.setHeader('Content-Type', 'text/html')
+        res.write(data);
+        res.end();
+    });
   // Return 404 for all other requests
   } else {
     res.statusCode = 404
