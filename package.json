@@ -13,12 +13,9 @@
   "author": "Michael Hart <michael.hart.au@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "browserify": "^13.0.0",
+    "browserify": "^13.1.0",
     "literalify": "^0.4.0",
-    "react": "^15.2.0",
-    "react-dom": "^15.2.0"
-  },
-  "devDependencies": {
-    "browserify": "^13.0.1"
+    "react": "^15.3.0",
+    "react-dom": "^15.3.0"
   }
 }
