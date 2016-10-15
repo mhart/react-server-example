@@ -124,7 +124,7 @@ http.createServer(function(req, res) {
       items: [
         'Item 0',
         'Item 1',
-        'Item </script>',
+        'Item </scRIpt>',
         'Item <!--inject!-->',
       ]
     }
@@ -198,6 +198,6 @@ http.createServer(function(req, res) {
 
 // A utility function to safely escape JSON for embedding in a <script> tag
 function safeStringify(obj) {
-  return JSON.stringify(obj).replace(/<\/script/g, '<\\/script').replace(/<!--/g, '<\\!--')
+  return JSON.stringify(obj).replace(/<\/(script)/ig, '<\\/$1').replace(/<!--/g, '<\\!--')
 }
 ```
