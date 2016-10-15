@@ -18,7 +18,7 @@ http.createServer(function(req, res) {
   // pointing to the client-side code
   if (req.url == '/') {
 
-    res.setHeader('Content-Type', 'text/html')
+    res.setHeader('Content-Type', 'text/html; charset=utf-8')
 
     // `props` represents the data to be passed in to the React component for
     // rendering - just as you would pass data, or expose variables in
@@ -30,8 +30,8 @@ http.createServer(function(req, res) {
       items: [
         'Item 0',
         'Item 1',
-        'Item </scRIpt>',
-        'Item <!--inject!-->',
+        'Item </scRIpt>\u2028',
+        'Item <!--inject!-->\u2029',
       ]
     }
 
@@ -104,5 +104,9 @@ http.createServer(function(req, res) {
 
 // A utility function to safely escape JSON for embedding in a <script> tag
 function safeStringify(obj) {
-  return JSON.stringify(obj).replace(/<\/(script)/ig, '<\\/$1').replace(/<!--/g, '<\\!--')
+  return JSON.stringify(obj)
+    .replace(/<\/(script)/ig, '<\\/$1')
+    .replace(/<!--/g, '<\\!--')
+    .replace(/\u2028/g, '\\u2028') // Only necessary if interpreting as JS, which we do
+    .replace(/\u2029/g, '\\u2029') // Ditto
 }
