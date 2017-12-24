@@ -20,6 +20,12 @@ $ node server.js
 Then navigate to [http://localhost:3000](http://localhost:3000) and
 click on the button to see some reactive events in action.
 
+
+
+(Or try it out with Docker!)
+* `docker run -p 3000:3000 -d docker.io/allthethings/react-server-example`
+* Then navigate to [http://localhost:3000](http://localhost:3000) (or e.g. [http://192.168.99.100:3000](http://192.168.99.100:3000) if using [docker-machine](https://docs.docker.com/toolbox/))
+
 Try viewing the page source to ensure the HTML being sent from the server is already rendered
 (with checksums to determine whether client-side rendering is necessary)
 
