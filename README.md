@@ -22,7 +22,7 @@ click on the button to see some reactive events in action.
 
 
 
-(Or try it out with Docker!)
+(Or try it out with [Docker!](https://www.docker.com/))
 * `docker run -p 3000:3000 -d docker.io/allthethings/react-server-example`
 * Then navigate to [http://localhost:3000](http://localhost:3000) (or e.g. [http://192.168.99.100:3000](http://192.168.99.100:3000) if using [docker-machine](https://docs.docker.com/toolbox/))
 
