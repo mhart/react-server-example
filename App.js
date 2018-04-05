@@ -1,10 +1,11 @@
-var React = require('react'),
-    DOM = React.DOM, div = DOM.div, button = DOM.button, ul = DOM.ul, li = DOM.li
+var createReactClass = require('create-react-class')
+var DOM = require('react-dom-factories')
+var div = DOM.div, button = DOM.button, ul = DOM.ul, li = DOM.li
 
 // This is just a simple example of a component that can be rendered on both
 // the server and browser
 
-module.exports = React.createClass({
+module.exports = createReactClass({
 
   // We initialise its state by using the `props` that were passed in when it
   // was first rendered. We also want the button to be disabled until the
@@ -23,7 +24,7 @@ module.exports = React.createClass({
   // AJAX calls, etc
   handleClick: function() {
     this.setState({
-      items: this.state.items.concat('Item ' + this.state.items.length)
+      items: this.state.items.concat('Item ' + this.state.items.length),
     })
   },
 

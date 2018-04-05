@@ -27,13 +27,14 @@ Here are the files involved:
 
 `App.js`:
 ```js
-var React = require('react'),
-    DOM = React.DOM, div = DOM.div, button = DOM.button, ul = DOM.ul, li = DOM.li
+var createReactClass = require('create-react-class')
+var DOM = require('react-dom-factories')
+var div = DOM.div, button = DOM.button, ul = DOM.ul, li = DOM.li
 
 // This is just a simple example of a component that can be rendered on both
 // the server and browser
 
-module.exports = React.createClass({
+module.exports = createReactClass({
 
   // We initialise its state by using the `props` that were passed in when it
   // was first rendered. We also want the button to be disabled until the
@@ -52,7 +53,7 @@ module.exports = React.createClass({
   // AJAX calls, etc
   handleClick: function() {
     this.setState({
-      items: this.state.items.concat('Item ' + this.state.items.length)
+      items: this.state.items.concat('Item ' + this.state.items.length),
     })
   },
 
@@ -77,10 +78,10 @@ module.exports = React.createClass({
 
 `browser.js`:
 ```js
-var React = require('react'),
-    ReactDOM = require('react-dom'),
-    // This is our React component, shared by server and browser thanks to browserify
-    App = React.createFactory(require('./App'))
+var React = require('react')
+var ReactDOM = require('react-dom')
+// This is our React component, shared by server and browser thanks to browserify
+var App = React.createFactory(require('./App'))
 
 // This script will run in the browser and will render our component using the
 // value from APP_PROPS that we generate inline in the page's html on the server.
@@ -92,15 +93,18 @@ ReactDOM.render(App(window.APP_PROPS), document.getElementById('content'))
 
 `server.js`:
 ```js
-var http = require('http'),
-    browserify = require('browserify'),
-    literalify = require('literalify'),
-    React = require('react'),
-    ReactDOMServer = require('react-dom/server'),
-    DOM = React.DOM, body = DOM.body, div = DOM.div, script = DOM.script,
-    // This is our React component, shared by server and browser thanks to browserify
-    App = React.createFactory(require('./App'))
+var http = require('http')
+var browserify = require('browserify')
+var literalify = require('literalify')
+var React = require('react')
+var ReactDOMServer = require('react-dom/server')
+var DOM = require('react-dom-factories')
+var body = DOM.body, div = DOM.div, script = DOM.script
+// This is our React component, shared by server and browser thanks to browserify
+var App = React.createFactory(require('./App'))
 
+// A variable to store our JS, which we create when /bundle.js is first requested
+var BUNDLE = null
 
 // Just create a plain old HTTP server that responds to two endpoints ('/' and
 // '/bundle.js') This would obviously work similarly with any higher level
@@ -110,7 +114,7 @@ http.createServer(function(req, res) {
   // If we hit the homepage, then we want to serve up some HTML - including the
   // server-side rendered React component(s), as well as the script tags
   // pointing to the client-side code
-  if (req.url == '/') {
+  if (req.url === '/') {
 
     res.setHeader('Content-Type', 'text/html; charset=utf-8')
 
@@ -126,7 +130,7 @@ http.createServer(function(req, res) {
         'Item 1',
         'Item </scRIpt>\u2028',
         'Item <!--inject!-->\u2029',
-      ]
+      ],
     }
 
     // Here we're using React to render the outer body, so we just use the
@@ -137,21 +141,24 @@ http.createServer(function(req, res) {
       // The actual server-side rendering of our component occurs here, and we
       // pass our data in as `props`. This div is the same one that the client
       // will "render" into on the browser from browser.js
-      div({id: 'content', dangerouslySetInnerHTML: {__html:
-        ReactDOMServer.renderToString(App(props))
-      }}),
+      div({
+        id: 'content',
+        dangerouslySetInnerHTML: {__html: ReactDOMServer.renderToString(App(props))},
+      }),
 
       // The props should match on the client and server, so we stringify them
       // on the page to be available for access by the code run in browser.js
       // You could use any var name here as long as it's unique
-      script({dangerouslySetInnerHTML: {__html:
-        'var APP_PROPS = ' + safeStringify(props) + ';'
-      }}),
+      script({
+        dangerouslySetInnerHTML: {__html: 'var APP_PROPS = ' + safeStringify(props) + ';'},
+      }),
 
       // We'll load React from a CDN - you don't have to do this,
       // you can bundle it up or serve it locally if you like
-      script({src: '//cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.min.js'}),
-      script({src: '//cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.min.js'}),
+      script({src: 'https://cdn.jsdelivr.net/npm/react@16.3.1/umd/react.production.min.js'}),
+      script({src: 'https://cdn.jsdelivr.net/npm/react-dom@16.3.1/umd/react-dom.production.min.js'}),
+      script({src: 'https://cdn.jsdelivr.net/npm/react-dom-factories@1.0.2/index.min.js'}),
+      script({src: 'https://cdn.jsdelivr.net/npm/create-react-class@15.6.3/create-react-class.min.js'}),
 
       // Then the browser will fetch and run the browserified bundle consisting
       // of browser.js and all its dependencies.
@@ -163,14 +170,16 @@ http.createServer(function(req, res) {
     res.end(html)
 
   // This endpoint is hit when the browser is requesting bundle.js from the page above
-  } else if (req.url == '/bundle.js') {
+  } else if (req.url === '/bundle.js') {
 
     res.setHeader('Content-Type', 'text/javascript')
 
-    // Here we invoke browserify to package up browser.js and everything it requires.
-    // DON'T do it on the fly like this in production - it's very costly -
-    // either compile the bundle ahead of time, or use some smarter middleware
-    // (eg browserify-middleware).
+    // If we've already bundled, send the cached result
+    if (BUNDLE != null) {
+      return res.end(BUNDLE)
+    }
+
+    // Otherwise, invoke browserify to package up browser.js and everything it requires.
     // We also use literalify to transform our `require` statements for React
     // so that it uses the global variable (from the CDN JS file) instead of
     // bundling it up with everything else
@@ -179,9 +188,15 @@ http.createServer(function(req, res) {
       .transform(literalify.configure({
         'react': 'window.React',
         'react-dom': 'window.ReactDOM',
+        'react-dom-factories': 'window.ReactDOMFactories',
+        'create-react-class': 'window.createReactClass',
       }))
-      .bundle()
-      .pipe(res)
+      .bundle(function(err, buf) {
+        // Now we can cache the result and serve this up each time
+        BUNDLE = buf
+        res.statusCode = err ? 500 : 200
+        res.end(err ? err.message : BUNDLE)
+      })
 
   // Return 404 for all other requests
   } else {
