@@ -155,8 +155,8 @@ http.createServer(function(req, res) {
 
       // We'll load React from a CDN - you don't have to do this,
       // you can bundle it up or serve it locally if you like
-      script({src: 'https://cdn.jsdelivr.net/npm/react@16.4.2/umd/react.production.min.js'}),
-      script({src: 'https://cdn.jsdelivr.net/npm/react-dom@16.4.2/umd/react-dom.production.min.js'}),
+      script({src: 'https://cdn.jsdelivr.net/npm/react@16.5.1/umd/react.production.min.js'}),
+      script({src: 'https://cdn.jsdelivr.net/npm/react-dom@16.5.1/umd/react-dom.production.min.js'}),
       script({src: 'https://cdn.jsdelivr.net/npm/react-dom-factories@1.0.2/index.min.js'}),
       script({src: 'https://cdn.jsdelivr.net/npm/create-react-class@15.6.3/create-react-class.min.js'}),
 
