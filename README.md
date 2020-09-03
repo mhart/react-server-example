@@ -9,6 +9,8 @@ and search-engine-friendly pages.
 A more complex example with shared routing and data fetching can be found at
 [react-server-routing-example](https://github.com/mhart/react-server-routing-example).
 
+A more complex example written in TypeScript can be found at [react-server-example-tsx](https://github.com/styfle/react-server-example-tsx).
+
 Example
 -------
 
